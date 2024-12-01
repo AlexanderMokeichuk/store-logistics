@@ -1,5 +1,12 @@
 import { Request, Response } from 'express';
-import { createProduct, createStock, getAllProducts, getStockByFilters } from '../services';
+import {
+  createProduct,
+  createStock,
+  decreaseStock,
+  getAllProducts,
+  getStockByFilters,
+  increaseStock,
+} from '../services';
 import { CustomError } from '../types';
 
 export const createProductController = async (req: Request, res: Response) => {
@@ -9,18 +16,7 @@ export const createProductController = async (req: Request, res: Response) => {
     res.send(product);
   } catch (error: unknown) {
     const err = error as CustomError;
-    res.status(err.statusCode || 500).json({ error: err.message || 'Something went wrong' });
-  }
-};
-
-export const createStockController = async (req: Request, res: Response) => {
-  const { productId, quantityOnShelf, quantityInOrder, shopId } = req.body;
-  try {
-    const stock = await createStock(productId, quantityOnShelf, quantityInOrder, shopId);
-    res.send(stock);
-  } catch (error: unknown) {
-    const err = error as CustomError;
-    res.status(err.statusCode || 500).json({ error: err.message || 'Something went wrong' });
+    res.status(err.statusCode || 500).send({ error: error || 'Something went wrong' });
   }
 };
 
@@ -31,7 +27,40 @@ export const getAllProductsController = async (req: Request, res: Response) => {
     res.send(productsList);
   } catch (error: unknown) {
     const err = error as CustomError;
-    res.status(err.statusCode || 500).json({ error: err.message || 'Something went wrong' });
+    res.status(err.statusCode || 500).send({ error: error || 'Something went wrong' });
+  }
+};
+
+export const createStockController = async (req: Request, res: Response) => {
+  const { productId, quantityOnShelf, quantityInOrder, shopId } = req.body;
+  try {
+    const stock = await createStock(productId, quantityOnShelf, quantityInOrder, shopId);
+    res.send(stock);
+  } catch (error: unknown) {
+    const err = error as CustomError;
+    res.status(err.statusCode || 500).send({ error: error || 'Something went wrong' });
+  }
+};
+
+export const increaseStockController = async (req: Request, res: Response) => {
+  const { productId, quantity, shopId } = req.body;
+  try {
+    const stock = await increaseStock(Number(productId), Number(quantity), Number(shopId));
+    res.status(200).json(stock);
+  } catch (error: unknown) {
+    const err = error as CustomError;
+    res.status(err.statusCode || 500).send({ error: error || 'Something went wrong' });
+  }
+};
+
+export const decreaseStockController = async (req: Request, res: Response) => {
+  const { productId, quantity, shopId } = req.body;
+  try {
+    const stock = await decreaseStock(Number(productId), Number(quantity), Number(shopId));
+    res.status(200).json(stock);
+  } catch (error: unknown) {
+    const err = error as CustomError;
+    res.status(err.statusCode || 500).send({ error: error || 'Something went wrong' });
   }
 };
 
@@ -50,6 +79,6 @@ export const getStockByFiltersController = async (req: Request, res: Response) =
     res.send(stocks);
   } catch (error: unknown) {
     const err = error as CustomError;
-    res.status(err.statusCode || 500).json({ error: err.message || 'Something went wrong' });
+    res.status(err.statusCode || 500).send({ error: error || 'Something went wrong' });
   }
 };

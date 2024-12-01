@@ -33,6 +33,77 @@ export const createStock = async (
   });
 };
 
+export const increaseStock = async (productId: number, quantity: number, shopId: number) => {
+  const currentStock = await prisma.stock.findUnique({
+    where: {
+      product_id_shop_id: {
+        product_id: productId,
+        shop_id: shopId,
+      },
+    },
+  });
+
+  if (!currentStock) {
+    throw { status: 404, message: 'Stock not found for the given product and shop.' };
+  }
+
+  if (quantity <= 0) {
+    throw { status: 400, message: 'The quantity to increase must be greater than 0.' };
+  }
+
+  const updatedStock = await prisma.stock.update({
+    where: {
+      id: currentStock.id,
+    },
+    data: {
+      quantity_on_shelf: {
+        increment: quantity,
+      },
+    },
+  });
+
+  return updatedStock;
+};
+
+export const decreaseStock = async (productId: number, quantity: number, shopId: number) => {
+  const currentStock = await prisma.stock.findUnique({
+    where: {
+      product_id_shop_id: {
+        product_id: productId,
+        shop_id: shopId,
+      },
+    },
+  });
+
+  if (!currentStock) {
+    throw { status: 404, message: 'Stock not found for the given product and shop.' };
+  }
+
+  if (quantity <= 0) {
+    throw { status: 400, message: 'The quantity to decrease must be greater than 0.' };
+  }
+
+  if (quantity > currentStock.quantity_on_shelf) {
+    throw {
+      status: 400,
+      message: 'Cannot decrease the stock by more than the available quantity on the shelf.',
+    };
+  }
+
+  const updatedStock = await prisma.stock.update({
+    where: {
+      id: currentStock.id,
+    },
+    data: {
+      quantity_on_shelf: {
+        decrement: quantity,
+      },
+    },
+  });
+
+  return updatedStock;
+};
+
 export const getStockByFilters = async (
   plu?: string,
   shopId?: number,

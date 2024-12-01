@@ -21,4 +21,6 @@ model Stock {
   shop_id           Int
   product_id        Int
   product           Product @relation(fields: [product_id], references: [id])
+
+  @@unique([product_id, shop_id])
 }
