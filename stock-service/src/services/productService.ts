@@ -9,6 +9,14 @@ export const createProduct = async (plu: string, name: string) => {
   });
 };
 
+export const getAllProducts = async (page: number, limit: number) => {
+  const skip = (page - 1) * limit;
+  return prisma.product.findMany({
+    skip,
+    take: limit,
+  });
+};
+
 export const createStock = async (
   product_id: number,
   quantityOnShelf: number,
