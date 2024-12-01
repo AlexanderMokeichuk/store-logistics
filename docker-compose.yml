@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  stock-db:
+    image: postgres:13
+    container_name: stock-db
+    environment:
+      POSTGRES_USER: stock_user
+      POSTGRES_PASSWORD: stock_password
+      POSTGRES_DB: stock_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - stock-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  history-db:
+    image: postgres:13
+    container_name: history-db
+    environment:
+      POSTGRES_USER: history_user
+      POSTGRES_PASSWORD: history_password
+      POSTGRES_DB: history_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - history-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  stock-data:
+  history-data:
+
+networks:
+  app-network:
+    driver: bridge
