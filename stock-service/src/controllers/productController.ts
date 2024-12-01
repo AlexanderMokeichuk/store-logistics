@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { createProduct, createStock, getStockByFilters } from '../services';
-import { CustomError } from '../types/error';
+import { CustomError } from '../types';
 
 export const createProductController = async (req: Request, res: Response) => {
   const { plu, name } = req.body;

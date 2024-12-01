@@ -1,7 +1,7 @@
 import prisma from '../models/prismaClient';
 
 export const createProduct = async (plu: string, name: string) => {
-  return await prisma.product.create({
+  return prisma.product.create({
     data: {
       plu,
       name,
@@ -10,17 +10,17 @@ export const createProduct = async (plu: string, name: string) => {
 };
 
 export const createStock = async (
-  productId: number,
+  product_id: number,
   quantityOnShelf: number,
   quantityInOrder: number,
   shopId: number,
 ) => {
-  return await prisma.stock.create({
+  return prisma.stock.create({
     data: {
-      productId,
-      quantityOnShelf,
-      quantityInOrder,
-      shopId,
+      product_id,
+      quantity_on_shelf: quantityOnShelf,
+      quantity_in_order: quantityInOrder,
+      shop_id: shopId,
     },
   });
 };
@@ -42,7 +42,7 @@ export const getStockByFilters = async (
   if (minOrderQuantity !== undefined) filters.quantity_in_order = { gte: minOrderQuantity };
   if (maxOrderQuantity !== undefined) filters.quantity_in_order = { lte: maxOrderQuantity };
 
-  return await prisma.stock.findMany({
+  return prisma.stock.findMany({
     where: filters,
     include: {
       product: true,
