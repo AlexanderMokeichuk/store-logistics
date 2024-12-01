@@ -17,6 +17,45 @@ export const getAllProducts = async (page: number, limit: number) => {
   });
 };
 
+export const getProductsByFilters = async (
+  name?: string,
+  plu?: string,
+  page: number = 1,
+  pageSize: number = 10,
+) => {
+  const filters: any = {};
+
+  if (name) {
+    filters.name = {
+      contains: name,
+      mode: 'insensitive',
+    };
+  }
+
+  if (plu) {
+    filters.plu = plu;
+  }
+
+  const skip = (page - 1) * pageSize;
+
+  const products = await prisma.product.findMany({
+    where: filters,
+    skip,
+    take: pageSize,
+  });
+
+  const totalCount = await prisma.product.count({
+    where: filters,
+  });
+
+  return {
+    products,
+    totalCount,
+    totalPages: Math.ceil(totalCount / pageSize),
+    currentPage: page,
+  };
+};
+
 export const createStock = async (
   product_id: number,
   quantityOnShelf: number,

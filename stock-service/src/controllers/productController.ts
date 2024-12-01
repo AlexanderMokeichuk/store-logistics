@@ -4,6 +4,7 @@ import {
   createStock,
   decreaseStock,
   getAllProducts,
+  getProductsByFilters,
   getStockByFilters,
   increaseStock,
 } from '../services';
@@ -25,6 +26,18 @@ export const getAllProductsController = async (req: Request, res: Response) => {
   try {
     const productsList = await getAllProducts(Number(page), Number(limit));
     res.send(productsList);
+  } catch (error: unknown) {
+    const err = error as CustomError;
+    res.status(err.statusCode || 500).send({ error: error || 'Something went wrong' });
+  }
+};
+
+export const getProductsByFiltersController = async (req: Request, res: Response) => {
+  const { name, plu } = req.query;
+
+  try {
+    const products = await getProductsByFilters(name as string, plu as string);
+    res.send(products);
   } catch (error: unknown) {
     const err = error as CustomError;
     res.status(err.statusCode || 500).send({ error: error || 'Something went wrong' });

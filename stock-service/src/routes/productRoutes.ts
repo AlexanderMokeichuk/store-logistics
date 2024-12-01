@@ -4,6 +4,7 @@ import {
   createStockController,
   decreaseStockController,
   getAllProductsController,
+  getProductsByFiltersController,
   getStockByFiltersController,
   increaseStockController,
 } from '../controllers';
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.post('/products', createProductController);
 router.get('/products', getAllProductsController);
+router.get('/products/search', getProductsByFiltersController);
 router.post('/stocks', createStockController);
 router.post('/stocks/increase', increaseStockController);
 router.post('/stocks/decrease', decreaseStockController);
