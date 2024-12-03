@@ -1,7 +1,7 @@
 import express from 'express';
 import productRoutes from './routes/productRoutes';
 
-const port = 8000;
+const port = 3001;
 const localhost = `http://localhost:${port}`;
 
 const app = express();

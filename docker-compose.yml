@@ -36,7 +36,7 @@ services:
     environment:
       DATABASE_URL: postgres://stock_user:stock_password@stock-db:5432/stock_db
     ports:
-      - "8000:8000"
+      - "3001:3001"
     depends_on:
       - stock-db
     networks:
