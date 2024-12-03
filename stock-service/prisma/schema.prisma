@@ -20,7 +20,7 @@ model Stock {
   quantity_in_order Int
   shop_id           Int
   product_id        Int
-  product           Product @relation(fields: [product_id], references: [id])
+  product           Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
   @@unique([product_id, shop_id])
 }

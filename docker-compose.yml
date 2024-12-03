@@ -31,61 +31,16 @@ services:
       - app-network
     restart: always
 
-  stock-service-migrations:
-    build:
-      context: ./stock-service
-    container_name: stock-service-migrations
-    command: ["npx", "prisma", "migrate", "deploy"]
-    depends_on:
-      - stock-db
-    networks:
-      - app-network
-    restart: "on-failure"
-
-  stock-service-seed:
-    build:
-      context: ./stock-service
-    container_name: stock-service-seed
-    command: ["npx", "ts-node", "prisma/seed.ts"]
-    depends_on:
-      - stock-service-migrations
-    networks:
-      - app-network
-    restart: "on-failure"
-
-  history-service-migrations:
-    build:
-      context: ./history-service
-    container_name: history-service-migrations
-    command: ["npx", "prisma", "migrate", "deploy"]
-    depends_on:
-      - history-db
-    networks:
-      - app-network
-    restart: "on-failure"
-
-  history-service-seed:
-    build:
-      context: ./history-service
-    container_name: history-service-seed
-    command: ["npx", "ts-node", "prisma/seed.ts"]
-    depends_on:
-      - history-service-migrations
-    networks:
-      - app-network
-    restart: "on-failure"
-
   stock-service:
     build:
       context: ./stock-service
     container_name: stock-service
-    environment:
-      DATABASE_URL: postgres://stock_user:stock_password@stock-db:5432/stock_db
+    env_file:
+      - ./stock-service/.env  
     ports:
       - "3001:3001"
     depends_on:
       - stock-db
-      - stock-service-seed
     networks:
       - app-network
     restart: "on-failure"
@@ -94,13 +49,12 @@ services:
     build:
       context: ./history-service
     container_name: history-service
-    environment:
-      DATABASE_URL: postgres://history_user:history_password@history-db:5432/history_db
+    env_file:
+      - ./history-service/.env
     ports:
       - "3000:3000"
     depends_on:
       - history-db
-      - history-service-seed
     networks:
       - app-network
     restart: "on-failure"

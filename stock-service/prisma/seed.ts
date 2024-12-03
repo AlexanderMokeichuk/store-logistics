@@ -13,17 +13,6 @@ async function main() {
   });
 
   console.log('Created products:', products);
-
-  const stocks = await prisma.stock.createMany({
-    data: Array.from({ length: 10 }).map((_, index) => ({
-      product_id: index + 1,
-      shop_id: index + 1,
-      quantity_on_shelf: Math.floor(Math.random() * 100),
-      quantity_in_order: Math.floor(Math.random() * 50),
-    })),
-  });
-
-  console.log('Created stock:', stocks);
 }
 
 main()
