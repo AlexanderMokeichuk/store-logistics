@@ -14,6 +14,7 @@ services:
       - stock-data:/var/lib/postgresql/data
     networks:
       - app-network
+    restart: always
 
   history-db:
     image: postgres:13
@@ -28,6 +29,7 @@ services:
       - history-data:/var/lib/postgresql/data
     networks:
       - app-network
+    restart: always
 
   stock-service-migrations:
     build:
@@ -38,7 +40,7 @@ services:
       - stock-db
     networks:
       - app-network
-    restart: "no"
+    restart: always
 
   history-service-migrations:
     build:
@@ -49,7 +51,7 @@ services:
       - history-db
     networks:
       - app-network
-    restart: "no"
+    restart: always
 
   stock-service:
     build:
@@ -86,4 +88,6 @@ volumes:
 networks:
   app-network:
     driver: bridge
+
+
 
