@@ -91,9 +91,8 @@ export const createStock = async (
 
   try {
     await axiosApi.post('/log-action', logData);
-    console.log('Stock action logged successfully');
   } catch (error) {
-    console.error('Error logging action:', error);
+    throw { status: 500, message: 'Failed to log action.' };
   }
 
   return createdStock;
@@ -127,6 +126,18 @@ export const increaseStock = async (productId: number, quantity: number, shopId:
       },
     },
   });
+
+  const logData = {
+    product_id: productId,
+    shop_id: shopId,
+    action: 'increase',
+  };
+
+  try {
+    await axiosApi.put('/update-action', logData);
+  } catch (error) {
+    throw { status: 500, message: 'Failed to log action.' };
+  }
 
   return updatedStock;
 };
@@ -166,6 +177,18 @@ export const decreaseStock = async (productId: number, quantity: number, shopId:
       },
     },
   });
+
+  const logData = {
+    product_id: productId,
+    shop_id: shopId,
+    action: 'decrease',
+  };
+
+  try {
+    await axiosApi.put('/update-action', logData);
+  } catch (error) {
+    throw { status: 500, message: 'Failed to log action.' };
+  }
 
   return updatedStock;
 };
