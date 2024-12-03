@@ -36,7 +36,7 @@ services:
       context: ./stock-service
     container_name: stock-service
     env_file:
-      - ./stock-service/.env  
+      - ./stock-service/.env
     ports:
       - "3001:3001"
     depends_on:
@@ -59,6 +59,39 @@ services:
       - app-network
     restart: "on-failure"
 
+  stock-service-migrations:
+    build:
+      context: ./stock-service
+    container_name: stock-service-migrations
+    command: ["npx", "prisma", "migrate", "deploy"]
+    depends_on:
+      - stock-db
+    networks:
+      - app-network
+    restart: "on-failure"
+
+  stock-service-seed:
+    build:
+      context: ./stock-service
+    container_name: stock-service-seed
+    command: ["npx", "ts-node", "prisma/seed.ts"]
+    depends_on:
+      - stock-service-migrations
+    networks:
+      - app-network
+    restart: "on-failure"
+
+  history-service-migrations:
+    build:
+      context: ./history-service
+    container_name: history-service-migrations
+    command: ["npx", "prisma", "migrate", "deploy"]
+    depends_on:
+      - history-db
+    networks:
+      - app-network
+    restart: "on-failure"
+
 volumes:
   stock-data:
   history-data:
@@ -66,4 +99,5 @@ volumes:
 networks:
   app-network:
     driver: bridge
+
 
