@@ -8,6 +8,11 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+COPY wait-for-it.sh /usr/local/bin/wait-for-it
+RUN chmod +x /usr/local/bin/wait-for-it
 
-CMD ["npm", "run", "dev"]
+RUN npm install -g typescript ts-node prisma
+
+CMD ["wait-for-it", "history-db:5432", "--", "npx", "prisma", "migrate", "deploy"]
+
+

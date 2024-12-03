@@ -29,6 +29,28 @@ services:
     networks:
       - app-network
 
+  stock-service-migrations:
+    build:
+      context: ./stock-service
+    container_name: stock-service-migrations
+    command: ["wait-for-it", "stock-db:5432", "--", "npx", "prisma", "migrate", "deploy"]
+    depends_on:
+      - stock-db
+    networks:
+      - app-network
+    restart: "no"
+
+  history-service-migrations:
+    build:
+      context: ./history-service
+    container_name: history-service-migrations
+    command: ["wait-for-it", "history-db:5432", "--", "npx", "prisma", "migrate", "deploy"]
+    depends_on:
+      - history-db
+    networks:
+      - app-network
+    restart: "no"
+
   stock-service:
     build:
       context: ./stock-service
@@ -39,6 +61,7 @@ services:
       - "3001:3001"
     depends_on:
       - stock-db
+      - stock-service-migrations
     networks:
       - app-network
 
@@ -52,6 +75,7 @@ services:
       - "3000:3000"
     depends_on:
       - history-db
+      - history-service-migrations
     networks:
       - app-network
 
@@ -62,3 +86,4 @@ volumes:
 networks:
   app-network:
     driver: bridge
+
