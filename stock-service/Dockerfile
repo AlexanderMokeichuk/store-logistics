@@ -6,17 +6,16 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN apt-get update && apt-get install -y netcat
+RUN apt-get update && apt-get install -y netcat-openbsd
 
 COPY . .
 
-COPY wait-for-it.sh /usr/local/bin/wait-for-it
+RUN npm install -g prisma
 
-RUN chmod +x /usr/local/bin/wait-for-it
+CMD ["npm", "run", "dev"]
 
-RUN npm install -g typescript ts-node prisma
 
-CMD ["wait-for-it", "stock-db:5432", "--", "npx", "prisma", "migrate", "deploy", "&&", "npm", "run", "dev"]
+
 
 
 

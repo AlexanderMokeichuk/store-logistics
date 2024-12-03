@@ -31,28 +31,6 @@ services:
       - app-network
     restart: always
 
-  stock-service-migrations:
-    build:
-      context: ./stock-service
-    container_name: stock-service-migrations
-    command: ["wait-for-it", "stock-db:5432", "--", "npx", "prisma", "migrate", "deploy"]
-    depends_on:
-      - stock-db
-    networks:
-      - app-network
-    restart: always
-
-  history-service-migrations:
-    build:
-      context: ./history-service
-    container_name: history-service-migrations
-    command: ["wait-for-it", "history-db:5432", "--", "npx", "prisma", "migrate", "deploy"]
-    depends_on:
-      - history-db
-    networks:
-      - app-network
-    restart: always
-
   stock-service:
     build:
       context: ./stock-service
@@ -63,9 +41,9 @@ services:
       - "3001:3001"
     depends_on:
       - stock-db
-      - stock-service-migrations
     networks:
       - app-network
+    restart: "on-failure"
 
   history-service:
     build:
@@ -77,9 +55,31 @@ services:
       - "3000:3000"
     depends_on:
       - history-db
-      - history-service-migrations
     networks:
       - app-network
+    restart: "on-failure"
+
+  stock-service-migrations:
+    build:
+      context: ./stock-service
+    container_name: stock-service-migrations
+    command: ["npx", "prisma", "migrate", "deploy"]
+    depends_on:
+      - stock-db
+    networks:
+      - app-network
+    restart: "on-failure"
+
+  history-service-migrations:
+    build:
+      context: ./history-service
+    container_name: history-service-migrations
+    command: ["npx", "prisma", "migrate", "deploy"]
+    depends_on:
+      - history-db
+    networks:
+      - app-network
+    restart: "on-failure"
 
 volumes:
   stock-data:
@@ -88,6 +88,3 @@ volumes:
 networks:
   app-network:
     driver: bridge
-
-
-
