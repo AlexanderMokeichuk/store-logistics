@@ -1,4 +1,5 @@
 import prisma from '../models/prismaClient';
+import axiosApi from '../axiosApi';
 
 export const createProduct = async (plu: string, name: string) => {
   return prisma.product.create({
@@ -60,9 +61,19 @@ export const createStock = async (
   product_id: number,
   quantityOnShelf: number,
   quantityInOrder: number,
-  shopId: number,
+  shopId: number
 ) => {
-  return prisma.stock.create({
+  const product = await prisma.product.findUnique({
+    where: { id: product_id },
+  });
+
+  if (!product) {
+    throw new Error('Product not found');
+  }
+
+  const plu = product.plu;
+
+  const createdStock = await prisma.stock.create({
     data: {
       product_id,
       quantity_on_shelf: quantityOnShelf,
@@ -70,6 +81,22 @@ export const createStock = async (
       shop_id: shopId,
     },
   });
+
+  const logData = {
+    productId: product_id,
+    shopId,
+    plu,
+    action: 'created',
+  };
+
+  try {
+    await axiosApi.post('/log-action', logData);
+    console.log('Stock action logged successfully');
+  } catch (error) {
+    console.error('Error logging action:', error);
+  }
+
+  return createdStock;
 };
 
 export const increaseStock = async (productId: number, quantity: number, shopId: number) => {
