@@ -22,7 +22,7 @@ export const createProductController = async (req: Request, res: Response) => {
 };
 
 export const getAllProductsController = async (req: Request, res: Response) => {
-  const { page, limit, } = req.query;
+  const { page = 1, limit = 10 } = req.query;
   try {
     const productsList = await getAllProducts(Number(page), Number(limit));
     res.send(productsList);
